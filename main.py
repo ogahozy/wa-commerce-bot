@@ -51,19 +51,21 @@ async def ping():
 async def verify_webhook(request: Request):
     params = request.query_params
     
-    # Meta sends both dot and underscore versions
     mode = params.get("hub.mode") or params.get("hub_mode")
     token = params.get("hub.verify_token") or params.get("hub_verify_token")
     challenge = params.get("hub.challenge") or params.get("hub_challenge")
 
-    logger.info(f"Webhook hit — mode={mode}, token={token}, challenge={challenge}")
-    logger.info(f"Expected token={VERIFY_TOKEN}, match={token == VERIFY_TOKEN}")
+    logger.info(f"mode='{mode}' token='{token}' challenge='{challenge}'")
+    logger.info(f"VERIFY_TOKEN='{VERIFY_TOKEN}'")
+    logger.info(f"token==VERIFY_TOKEN: {token == VERIFY_TOKEN}")
+    logger.info(f"token repr: {repr(token)}")
+    logger.info(f"VERIFY_TOKEN repr: {repr(VERIFY_TOKEN)}")
 
     if mode == "subscribe" and token == VERIFY_TOKEN:
         logger.info("Verified successfully")
         return PlainTextResponse(content=challenge, status_code=200)
     
-    logger.warning(f"Verification failed — mode={mode}, token={token}")
+    logger.warning(f"Failed — mode match:{mode=='subscribe'} token match:{token==VERIFY_TOKEN}")
     return PlainTextResponse(content="Forbidden", status_code=403)
 
 

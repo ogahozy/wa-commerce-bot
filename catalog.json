@@ -1,0 +1,37 @@
+{
+  "business_name": "Zara's Closet Abuja",
+  "business_type": "fashion",
+  "currency": "NGN",
+  "greeting": "Welcome to Zara's Closet! 👗 We sell ankara dresses, co-ord sets, and ready-to-wear outfits. What are you looking for today?",
+  "delivery_info": "We deliver within Abuja for ₦1,500. Outside Abuja via courier, fee depends on location.",
+  "payment_info": "Payment via bank transfer or card on Paystack link after order confirmation.",
+  "products": [
+    {
+      "id": "P001",
+      "name": "Ankara Print Dress",
+      "price": 15000,
+      "description": "Beautiful ankara print dress, available in sizes S-XL",
+      "sizes": ["S", "M", "L", "XL"],
+      "colors": ["Red/Gold", "Blue/White", "Green/Black"],
+      "in_stock": true
+    },
+    {
+      "id": "P002",
+      "name": "Co-ord Set (Top & Trouser)",
+      "price": 22000,
+      "description": "Matching two-piece set, ankara fabric",
+      "sizes": ["S", "M", "L"],
+      "colors": ["Orange/Brown", "Purple/Gold"],
+      "in_stock": true
+    },
+    {
+      "id": "P003",
+      "name": "Ready-to-Wear Gown",
+      "price": 18500,
+      "description": "Elegant ready-to-wear gown for events",
+      "sizes": ["M", "L", "XL"],
+      "colors": ["Black", "Wine"],
+      "in_stock": true
+    }
+  ]
+}

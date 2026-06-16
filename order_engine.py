@@ -36,7 +36,10 @@ YOUR JOB:
 7. NEVER invent products, prices, or sizes not listed above.
 
 IMPORTANT: When you have a complete order ready for confirmation, end your message with this exact tag on its own line:
-[ORDER_READY: product_id=X, quantity=Y, size=Z, color=W, address=ADDRESS]
+[ORDER_READY: product_id=X, quantity=Y, size=Z, color=W, address=ADDRESS, delivery_fee=FEE, total=TOTAL]
+
+Calculate delivery_fee based on the delivery info above (use 0 if delivery info doesn't specify a clear fee, or if customer is picking up).
+Calculate total as (product_price x quantity) + delivery_fee. Always double check your math before including the tag.
 
 Only include this tag when the order is fully confirmed by the customer, not before.
 """

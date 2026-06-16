@@ -146,7 +146,19 @@ async def handle_completed_order(customer_number: str, order_data: dict):
     except Exception:
         qty_num = 1
 
-    total = price * qty_num
+    try:
+        delivery_fee = int(float(order_data.get("delivery_fee", "0")))
+    except Exception:
+        delivery_fee = 0
+
+    try:
+        total = int(float(order_data.get("total", "0")))
+    except Exception:
+        total = 0
+
+    # Fallback: if AI didn't supply a valid total, calculate it ourselves
+    if total <= 0:
+        total = (price * qty_num) + delivery_fee
 
     order_summary = (
         f"🛍️ NEW ORDER\n"
@@ -154,20 +166,23 @@ async def handle_completed_order(customer_number: str, order_data: dict):
         f"Item: {product_name}\n"
         f"Size: {size} | Color: {color}\n"
         f"Quantity: {quantity}\n"
-        f"Total: ₦{total:,}\n"
+        f"Subtotal: ₦{price * qty_num:,}\n"
+        f"Delivery: ₦{delivery_fee:,}\n"
+        f"TOTAL: ₦{total:,}\n"
         f"Delivery to: {address}"
     )
 
     logger.info(f"Order completed: {order_summary}")
 
-    # Notify business owner
     if OWNER_NUMBER:
         await send_reply(OWNER_NUMBER, order_summary)
 
-    # Confirm to customer with payment placeholder (Paystack integration comes next)
     confirm_msg = (
         f"Your order is confirmed! 🎉\n\n"
-        f"{product_name} x{quantity} — ₦{total:,}\n\n"
+        f"{product_name} x{quantity}\n"
+        f"Subtotal: ₦{price * qty_num:,}\n"
+        f"Delivery: ₦{delivery_fee:,}\n"
+        f"Total: ₦{total:,}\n\n"
         f"We'll send your payment link shortly. Thank you for shopping with us!"
     )
     await send_reply(customer_number, confirm_msg)

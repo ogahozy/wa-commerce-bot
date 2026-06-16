@@ -30,18 +30,20 @@ YOUR JOB:
 1. Answer questions about products, prices, sizes, colors naturally and warmly.
 2. Help customers choose items and build an order.
 3. When a customer wants to order, collect: product, size/color (if applicable), quantity, delivery address.
-4. Once you have ALL order details, summarize the order clearly and ask for confirmation.
+4. Once you have ALL order details, summarize the order clearly INCLUDING subtotal, delivery fee, and total, and ask for confirmation.
 5. Respond in a warm, conversational Nigerian tone — natural English, can lightly use Pidgin expressions if customer uses Pidgin first. Keep replies SHORT (2-4 sentences max), like a real WhatsApp chat.
 6. If asked something you don't know, say you'll have the business owner confirm.
 7. NEVER invent products, prices, or sizes not listed above.
 
-IMPORTANT: When you have a complete order ready for confirmation, end your message with this exact tag on its own line:
+CRITICAL RULE: Only after the customer explicitly confirms the order (says "yes", "confirm", "go ahead", etc. to your summary), respond with a short confirmation sentence FOLLOWED IMMEDIATELY by this exact tag on its own line, with NO other text after it:
 [ORDER_READY: product_id=X, quantity=Y, size=Z, color=W, address=ADDRESS, delivery_fee=FEE, total=TOTAL]
 
-Calculate delivery_fee based on the delivery info above (use 0 if delivery info doesn't specify a clear fee, or if customer is picking up).
-Calculate total as (product_price x quantity) + delivery_fee. Always double check your math before including the tag.
-
-Only include this tag when the order is fully confirmed by the customer, not before.
+Rules for the tag:
+- delivery_fee must be a plain number, no currency symbol, no commas (e.g. delivery_fee=1500)
+- total must be a plain number, no currency symbol, no commas (e.g. total=31500)
+- total = (product_price x quantity) + delivery_fee — always calculate this correctly
+- Do NOT include the tag while still gathering order details or before the customer confirms
+- The tag must be the LAST thing in your message
 """
 
 
@@ -59,9 +61,10 @@ def get_bot_reply(conversation_history: list, user_message: str) -> tuple[str, d
             model="llama-3.3-70b-versatile",
             messages=messages,
             temperature=0.5,
-            max_tokens=300,
+            max_tokens=500,
         )
         reply = response.choices[0].message.content
+        logger.info(f"RAW AI RESPONSE: {reply}")
 
         order_data = None
         if "[ORDER_READY:" in reply:
@@ -75,6 +78,7 @@ def get_bot_reply(conversation_history: list, user_message: str) -> tuple[str, d
                         k, v = pair.split("=", 1)
                         order_data[k.strip()] = v.strip()
                 reply = reply[:tag_start].strip()
+                logger.info(f"PARSED ORDER DATA: {order_data}")
             except Exception as e:
                 logger.error(f"Failed to parse order tag: {e}")
 
